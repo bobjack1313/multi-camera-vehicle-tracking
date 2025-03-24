@@ -78,7 +78,7 @@ class Camera(BaseCamera):
         memory = {}
         while True:
             cam_id, frame = image_hub.recv_image()
-           # print(f"[{cam_id}] Frame received by YOLO thread.")
+            #print(f"[{cam_id}] Frame received by YOLO thread.")
             image_hub.send_reply(b'OK')  # this is needed for the stream to work with REQ/REP pattern
             # image_height, image_width = frame.shape[:2]
 
