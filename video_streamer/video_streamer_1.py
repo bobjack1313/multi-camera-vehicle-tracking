@@ -5,7 +5,7 @@ import os
 import socket
 
 
-def create_streamer(file, connect_to='tcp://127.0.0.1:5555', loop=True):
+def create_streamer(file, connect_to='tcp://127.0.0.1:5566', loop=True):
     """
     You can use this function to emulate an IP camera for the counting apps.
 
@@ -34,17 +34,16 @@ def create_streamer(file, connect_to='tcp://127.0.0.1:5555', loop=True):
     # prepare streaming
     sender = imagezmq.ImageSender(connect_to=connect_to)
    # host_name = socket.gethostname()
-    host_name = "Camera 1"
-
+    host_name = "Camera 2"
     while True:
         ret, frame = cap.read()
         
         if ret:
-            #print("Sending video frames...")
+           # print("Sending video frames...")
             # if a frame was returned, send it
             sender.send_image(host_name, frame)
         else:
-            #print("Failed to send video frames to app.")
+           # print("Failed to send video frames to app.")
             # if no frame was returned, either restart or stop the stream
             if loop:
                 cap = cv2.VideoCapture(file)
@@ -53,4 +52,4 @@ def create_streamer(file, connect_to='tcp://127.0.0.1:5555', loop=True):
 
 
 if __name__ == '__main__':
-    streamer = create_streamer('video.mp4')
+    streamer = create_streamer('video1.mp4')

@@ -78,6 +78,7 @@ class Camera(BaseCamera):
         memory = {}
         while True:
             cam_id, frame = image_hub.recv_image()
+           # print(f"[{cam_id}] Frame received by YOLO thread.")
             image_hub.send_reply(b'OK')  # this is needed for the stream to work with REQ/REP pattern
             # image_height, image_width = frame.shape[:2]
 
@@ -86,14 +87,17 @@ class Camera(BaseCamera):
 
             num_frames += 1
 
-            '''
-            if num_frames % 2 != 0:  # only process frames at set number of frame intervals
+            
+            if num_frames % 4 != 0:  # only process frames at set number of frame intervals
                 continue
-            '''
-
+            
+           # resized_frame = cv2.resize(frame, (608, 608))  # force match model input
+            #image = Image.fromarray(resized_frame[..., ::-1])  # convert BGR to RGB
             image = Image.fromarray(frame[..., ::-1])  # convert bgr to rgb
+            #print(f"[{cam_id}] YOLO input shape: {np.array(image).shape}")
             boxes, confidence, classes = yolo.detect_image(image)
             features = encoder(frame, boxes)
+           # features = encoder(resized_frame, boxes)
 
             detections = [Detection(bbox, confidence, cls, feature) for bbox, confidence, cls, feature in
                           zip(boxes, confidence, classes, features)]
@@ -110,9 +114,13 @@ class Camera(BaseCamera):
             tracker.update(detections)
 
             if cam_id == 'Camera 1':
-                line = [(0, int(0.5 * frame.shape[0])), (int(frame.shape[1]), int(0.5 * frame.shape[0]))]
+               # line = [(0, int(0.3 * frame.shape[0])), (int(frame.shape[1]), int(0.5 * frame.shape[0]))]
+                line = [(int(0.3 * frame.shape[1]), 0), (int(0.3 * frame.shape[1]), frame.shape[0])]
+            
             else:
-                line = [(0, int(0.33 * frame.shape[0])), (int(frame.shape[1]), int(0.33 * frame.shape[0]))]
+                line = [(0, int(0.7 * frame.shape[0])), (int(frame.shape[1]), int(0.7 * frame.shape[0]))]
+
+               # line = [(0, int(0.33 * frame.shape[0])), (int(frame.shape[1]), int(0.33 * frame.shape[0]))]
 
             # draw yellow line
             cv2.line(frame, line[0], line[1], (0, 255, 255), 2)
