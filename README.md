@@ -91,7 +91,14 @@ conda activate multi_cam_v2
 ---
 
 ## 📜 License
-This project is licensed under the MIT License.
+
+This project is licensed under the terms of the **GNU General Public License v3.0 (GPL-3.0)**.
+
+You are free to:
+- Use, modify, and distribute this software under the same GPLv3 terms.
+- Build upon the work, but **must also license your derivative works under GPLv3**.
+
+See the full license text in the [LICENSE](./LICENSE) file or visit [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html) for more information.
 
 ---
 
