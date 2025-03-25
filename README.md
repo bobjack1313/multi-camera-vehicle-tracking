@@ -8,7 +8,7 @@ This repository contains an upgraded version of the original Multi-Camera Live O
 
 ---
 
-##Key Features
+## Key Features
 
 - **YOLOv8 object detection** with custom-trained models
 - **Deep SORT object tracking** rewritten in PyTorch
@@ -23,7 +23,7 @@ This repository contains an upgraded version of the original Multi-Camera Live O
 
 ---
 
-##Use Cases
+## Use Cases
 - Traffic analytics for smart cities
 - Entry/exit flow monitoring
 - Parking lot analysis
@@ -31,7 +31,7 @@ This repository contains an upgraded version of the original Multi-Camera Live O
 
 ---
 
-##How It Works
+## How It Works
 
 1. **Streams** are received from local videos, IP cameras, or smartphones (via [ImageZMQ](https://github.com/jeffbass/imagezmq))
 2. **YOLOv8** detects objects per frame (custom or COCO weights supported)
@@ -41,7 +41,7 @@ This repository contains an upgraded version of the original Multi-Camera Live O
 
 ---
 
-##Training Custom Models
+## Training Custom Models
 We support:
 - Uploading and labeling your own data via [Roboflow](https://roboflow.com)
 - Conversion of public datasets (e.g. DETRAC) using built-in tools
@@ -59,7 +59,7 @@ yolo detect train \
 
 ---
 
-##Recommended Hardware
+## Recommended Hardware
 - **GPU:** NVIDIA GTX 1650 or better
 - **CPU:** Quad-core or higher
 - **RAM:** 8GB minimum
@@ -67,7 +67,7 @@ yolo detect train \
 
 ---
 
-##Dependencies
+## Dependencies
 - Python 3.10+
 - PyTorch (with CUDA support)
 - Ultralytics (YOLOv8)
@@ -83,14 +83,14 @@ conda activate multi_cam_v2
 
 ---
 
-##Sample Output
+## Sample Output
 <div align='center'>
 <img src="gifs/traffic_counting1.gif" width="80%"/>
 </div>
 
 ---
 
-##License
+## License
 
 This project is licensed under the terms of the **GNU General Public License v3.0 (GPL-3.0)**.
 
@@ -102,7 +102,7 @@ See the full license text in the [LICENSE](./LICENSE) file or visit [https://www
 
 ---
 
-##Credits
+## Credits
 - [LeonLok](https://github.com/LeonLok) - Original Deep SORT + YOLOv4 implementation
 - [Ultralytics](https://github.com/ultralytics/ultralytics) - YOLOv8 engine
 - [deep_sort_realtime](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch)
