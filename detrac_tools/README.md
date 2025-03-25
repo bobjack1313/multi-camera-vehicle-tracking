@@ -2,50 +2,85 @@
 Convert DETRAC Dataset for YOLO and Deep SORT
 </h1>
 
-## Instructions
-First, download and extract the training dataset and v3 training annotations from [DETRAC](http://detrac-db.rit.albany.edu/).
+# Convert DETRAC Dataset for YOLOv8 and (Optional) Deep SORT Appearance Model
 
-Please note that the conversion process can take a while and requires a decent amount of free disk space. With my default settings on the DETRAC training set, I had **163,171** cropped images of vehicle sequences (which was only about 330MB) and **81,446** copied images for YOLO (which, including annotations, was about 5.13GB).
+This toolset allows you to prepare the DETRAC vehicle dataset for use with modern object detection and tracking workflows, specifically:
 
-### Deep SORT (crop_dataset.py)
+- **YOLOv8** (Ultralytics PyTorch-based)
+- **Deep SORT** (appearance-based tracking, optional)
+
+Previous Notes:
 I followed this [paper](https://ieeexplore.ieee.org/document/8909903) as a guideline for parameters. They removed all sequences of vehicles that had a truncation or occlusion threshold higher than 0.5. Those that then had less than 100 occurrences were ignored. Each vehicle in each satisfactory image is then cropped and resized to 100x100.
 
 I've replicated that in the script so that you can choose your own thresholds and output image size. The script basically goes through the annotations and creates a dictionary of what to crop and what to ignore.
 
-These are the default settings that I used for my own model:
-* Occlusion threshold = 0.5
-* Trucation threshold = 0.5
-* Number of occurrences = 100
-* Image size = (100, 100)
-
-You can change these within `crop_dataset.py` or you can pass the arguments in the command line (except for image size).
-
-For example,
-```
-crop_dataset.py --occlusion_threshold=0.6 --truncation_threshold=0.6 --occurrences=50
-```
-
 The cropped sequences should all be outputted to the `DETRAC_cropped` directory in Market 1501 format. Then, follow the instructions on how to train a Market 1501 dataset in the njojke's [cosine metric learning](https://github.com/nwojke/cosine_metric_learning) repository.
 
+---
 
-### Darknet's YOLO (detrac_to_yolo.py)
-I trained a YOLO v4 model using AlexeyAB's [darknet](https://github.com/AlexeyAB/darknet). Follow the instructions there to train your own model.
+## Tools Included
 
-I decided to include the occlusion and truncation thresholds here for the same reasons as when I trained the Deep SORT model. However, there's no image resize since there's no need to crop anything and no occurrence thresholds since YOLO isn't for tracking.
+### 1. `detrac_to_yolo.py`
+Converts DETRAC annotations to **YOLOv8-compatible format**.
 
-Like `crop_dataset.py`, you can change the default settings within the file or pass the arguments in the command line.
+- Outputs training images and YOLO `.txt` labels
+- Applies optional occlusion and truncation filters
+- Saves images to `DETRAC_YOLO_training/`
+- Saves annotations to `DETRAC_YOLO_annotations/`
+- Generates `detrac_classes.txt` to list classes used
 
-For example,
+**Example usage:**
+```bash
+python detrac_to_yolo.py --occlusion_threshold=0.6 --truncation_threshold=0.6
 ```
-detrac_to_yolo.py --occlusion_threshold=0.6 --truncation_threshold=0.6
+
+### Parameters:
+- `--occlusion_threshold`: Minimum allowed occlusion ratio (default: 0.5)
+- `--truncation_threshold`: Minimum allowed truncation ratio (default: 0.5)
+
+The output can be used directly to train a YOLOv8 model with:
+```bash
+yolo detect train \
+  data=datasets/detrac_yolo/data.yaml \
+  model=yolov8n.pt \
+  epochs=50
 ```
 
-The script works in a similar way to `crop_dataset.py` by iterating through each annotation file and calculating the truncation and occlusion ratios of each object. Those that satisfy the requirements are counted with respect to its frame number. Frames that contain no qualifying objects in the end are then ignored.
+---
 
-The images are then copied to the `DETRAC_YOLO_training` directory and the corresponding annotations for each image are also calculated and outputted to `DETRAC_YOLO_annotations`.
+### 2. `crop_dataset.py` *(Optional)*
+Used to prepare vehicle crops in **Market-1501 format** for training a **Deep SORT re-ID model** (if you are not using `deep_sort_realtime`).
 
-A class list text file is also created for the outputted training images under `detrac_classes.txt`. You need this for training in Darknet and also for when you use the YOLO model for object detection.
+- Filters sequences with heavy occlusion or truncation
+- Ignores vehicle IDs with fewer than X appearances
+- Outputs cropped images to `DETRAC_cropped/`
 
-#### Darknet Config File
-I've also included the config file that I used when I was training with Darknet.
+**Example usage:**
+```bash
+python crop_dataset.py --occlusion_threshold=0.6 --truncation_threshold=0.6 --occurrences=50
+```
 
+**Default values:**
+- `occlusion_threshold = 0.5`
+- `truncation_threshold = 0.5`
+- `occurrences = 100`
+- `image_size = 100x100`
+
+> You can use this output with projects that follow Market-1501 style training (e.g., cosine metric learning for appearance embedding).
+
+---
+
+## Dataset Info
+Using the default DETRAC training split:
+- ~163,000 cropped images for Deep SORT
+- ~81,000 annotated images for YOLO training
+
+These will require approx. **5GB+ of space** during conversion.
+
+---
+
+## Credits
+- DETRAC Dataset: [http://detrac-db.rit.albany.edu](http://detrac-db.rit.albany.edu)
+- Based on conversion logic inspired by [this paper](https://ieeexplore.ieee.org/document/8909903)
+- YOLOv8: [https://github.com/ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)
+- Deep SORT re-ID: [https://github.com/nwojke/cosine_metric_learning](https://github.com/nwojke/cosine_metric_learning)
