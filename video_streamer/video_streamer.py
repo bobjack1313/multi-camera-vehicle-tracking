@@ -24,13 +24,17 @@ def create_streamer(file, connect_to='tcp://127.0.0.1:5555', loop=True):
     None.
 
     """
-    
+
     # check if file exists and open capture
     if os.path.isfile(file):
         cap = cv2.VideoCapture(file)
     else:
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file)
-    
+
+    # Force resolution
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
     # prepare streaming
     sender = imagezmq.ImageSender(connect_to=connect_to)
    # host_name = socket.gethostname()
@@ -38,16 +42,18 @@ def create_streamer(file, connect_to='tcp://127.0.0.1:5555', loop=True):
 
     while True:
         ret, frame = cap.read()
-        
+
         if ret:
-            #print("Sending video frames...")
-            # if a frame was returned, send it
+            # Optionally downscale frame here if needed
             sender.send_image(host_name, frame)
+            #print("Sending video frames...")
         else:
             #print("Failed to send video frames to app.")
             # if no frame was returned, either restart or stop the stream
             if loop:
                 cap = cv2.VideoCapture(file)
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             else:
                 break
 
