@@ -87,10 +87,10 @@ class Camera(BaseCamera):
 
             num_frames += 1
 
-            
+
             if num_frames % 4 != 0:  # only process frames at set number of frame intervals
                 continue
-            
+ 
            # resized_frame = cv2.resize(frame, (608, 608))  # force match model input
             #image = Image.fromarray(resized_frame[..., ::-1])  # convert BGR to RGB
             image = Image.fromarray(frame[..., ::-1])  # convert bgr to rgb
@@ -116,7 +116,7 @@ class Camera(BaseCamera):
             if cam_id == 'Camera 1':
                # line = [(0, int(0.3 * frame.shape[0])), (int(frame.shape[1]), int(0.5 * frame.shape[0]))]
                 line = [(int(0.3 * frame.shape[1]), 0), (int(0.3 * frame.shape[1]), frame.shape[0])]
-            
+
             else:
                 line = [(0, int(0.7 * frame.shape[0])), (int(frame.shape[1]), int(0.7 * frame.shape[0]))]
 
@@ -180,9 +180,16 @@ class Camera(BaseCamera):
                 del memory[list(memory)[0]]
 
             # Draw total count.
-            cv2.putText(frame, "Total: {} ({} up, {} down)".format(str(total_counter), str(up_count),
-                        str(down_count)), (int(0.05 * frame.shape[1]), int(0.1 * frame.shape[0])), 0,
-                        1.5e-3 * frame.shape[0], (0, 255, 255), 2)
+            direction_label = "up", "down"
+
+            if cam_id == 'Camera 1': 
+                direction_label = "left", "right"
+
+            cv2.putText(frame, "Total: {} ({} {}, {} {})".format(
+                        str(total_counter), str(up_count), direction_label[0],
+                        str(down_count), direction_label[1]),
+                            (int(0.05 * frame.shape[1]), int(0.1 * frame.shape[0])),
+                            0, 1.5e-3 * frame.shape[0], (0, 255, 255), 2)
 
             if show_detections:
                 for det in detections:
