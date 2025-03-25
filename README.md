@@ -4,7 +4,7 @@ Multi-Camera Vehicle Tracking
 
 This repository contains an upgraded version of the original Multi-Camera Live Object Tracking system. It features modernized, GPU-accelerated real-time object detection and tracking using **YOLOv8**, **Deep SORT (PyTorch)**, and **Flask**. It supports live IP camera feeds, emulated streams, and video files, with customizable class-based object counting, tracking IDs, and CSV logging.
 
-> This project was originally forked from [LeonLok’s Multi-Camera Live Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking) and has since been restructured, refactored, and upgraded for modern deployment and extensibility under the terms of the MIT License.
+> This project was originally forked from [LeonLok’s Multi-Camera Live Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking) and has since been restructured, refactored, and upgraded for modern deployment and extensibility under the terms of the GPLv3 License.
 
 ---
 
