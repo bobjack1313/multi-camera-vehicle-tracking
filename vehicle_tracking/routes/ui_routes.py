@@ -16,11 +16,13 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from flask import Blueprint, render_template
-
+import os 
+import glob 
 
 ui_bp = Blueprint('ui_routes', __name__)
 
-
 @ui_bp.route('/')
 def index():
-    return render_template('index.html')
+    video_dir = os.path.join("video_data", "videos")
+    existing_videos = glob.glob(os.path.join(video_dir, "*.mp4"))
+    return render_template('index.html', existing_videos=existing_videos)

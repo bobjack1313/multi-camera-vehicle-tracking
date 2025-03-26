@@ -1,3 +1,21 @@
+# multi-camera-vehicle-tracking
+# stream_contoller.py
+# Copyright (C) 2025 Bob Jack
+# Originally forked from Multi-Camera Live Object Tracking by Leon Lok (2020)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import time
 import threading
 import imagezmq
@@ -155,12 +173,12 @@ class BaseCamera:
     def _thread(cls, unique_name, port_list):
         feed_type, device = unique_name
         if feed_type == 'camera':
-            port = port_list[int(device)]
+            port = port_list  # Already a single int, not a list anymore
             print('Starting server thread for device {} at port {}.'.format(device, port))
             cls.server_thread(unique_name, port)
 
         elif feed_type == 'yolo':
-            port = port_list[int(device)]
+            port = port_list  # Already a single int, not a list anymore
             print('Starting YOLO thread for device {}.'.format(device))
             cls.yolo_thread(unique_name, port)
 

@@ -22,6 +22,21 @@ api_bp = Blueprint('api_routes', __name__)
 # You can prefix blueprints using:
 # app.register_blueprint(api_bp, url_prefix='/api')
 
+# # For now: a static test list (later replace with real stream tracking)
+# streams = [
+#     {"id": 0, "camera_id": "Camera 1", "feed_type": "yolo"},
+#     {"id": 1, "camera_id": "Camera 2", "feed_type": "yolo"}
+# ]
+
 @api_bp.route('/api/status')
 def system_status():
     return jsonify({"status": "ok", "message": "API is running"})
+
+
+@api_bp.route('/api/streams')
+def get_streams():
+    # Temporary static list — replace with real logic later
+    return jsonify([
+        {"id": 0, "camera_id": "Camera 1", "feed_type": "yolo"},
+        {"id": 1, "camera_id": "Camera 2", "feed_type": "yolo"}
+    ])

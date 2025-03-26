@@ -50,4 +50,4 @@ traffic_counting/yolov8n.pt
 # Project Extras
 # -----------------------------------------------------------------------------
 counts/
-video_streamer/*.mp4
+video_data/

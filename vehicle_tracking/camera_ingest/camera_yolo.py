@@ -1,10 +1,29 @@
+# multi-camera-vehicle-tracking
+# camera_yolo.py
+# Copyright (C) 2025 Bob Jack
+# Originally forked from Multi-Camera Live Object Tracking by Leon Lok (2020)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+import os
 import cv2
 import numpy as np
 import datetime
 from collections import Counter, deque
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
-from base_camera import BaseCamera
+from camera_ingest.stream_controller import BaseCamera
 
 
 class Camera(BaseCamera):
@@ -30,7 +49,8 @@ class Camera(BaseCamera):
         cam_id = unique_name[1]
         print(f"[Camera {cam_id}] Starting YOLOv8 + Deep SORT stream...")
 
-        model = YOLO("yolov8n.pt")  # Swap with yolov8s.pt or custom model if needed
+        model_path = os.path.join("yolov8_models", "yolov8n.pt")
+        model = YOLO(model_path)
         tracker = DeepSort(max_age=30)
 
         count_dict = {}

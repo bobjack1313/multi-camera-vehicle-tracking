@@ -18,7 +18,8 @@
 
 from flask import Blueprint, Response
 from importlib import import_module
-from vehicle_tracking.app import gen
+from utils.streaming import gen
+
 
 stream_bp = Blueprint('stream_routes', __name__)
 

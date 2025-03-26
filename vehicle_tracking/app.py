@@ -15,9 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+try:
+    from routes.stream_control_routes import stream_control_bp
+except Exception as e:
+    import traceback
+    print("[ERROR] Failed to import stream_control_bp:")
+    traceback.print_exc()
+    raise
+
 from flask import Flask
 from routes.ui_routes import ui_bp
 from routes.stream_routes import stream_bp
+#from routes.stream_control_routes import stream_control_bp
 from routes.api_routes import api_bp
 
 app = Flask(__name__,
@@ -27,6 +36,7 @@ app = Flask(__name__,
 # Register Blueprints
 app.register_blueprint(ui_bp)
 app.register_blueprint(stream_bp)
+app.register_blueprint(stream_control_bp)
 app.register_blueprint(api_bp)
 
 if __name__ == '__main__':
