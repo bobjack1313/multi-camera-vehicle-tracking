@@ -23,6 +23,10 @@ import glob
 
 
 stream_control_bp = Blueprint('stream_control_routes', __name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'video_data/uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 
 @stream_control_bp.route('/add_stream', methods=['GET', 'POST'])
 def add_stream():

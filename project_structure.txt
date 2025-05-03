@@ -1,0 +1,94 @@
+System structure
+
+
+multi-camera-vehicle-tracking/
+├── datasets/
+|	├── roboflow_raw/
+|	|	└── images/
+|	└── vehicle_counter_v1/
+|		├── train/
+|		|	├── images/
+|		|	├── labels/
+|	 	|	└── labels.cache
+|		├── valid/
+|		|	├── images/
+|	 	|	└── labels/
+|		└── data.yaml
+|
+├── detrac_tools/
+|
+├── gifs/
+|
+├── models/
+|		└── yolo/
+|			├── runs/
+|	 		|	└── detect/
+|	 		|		├── train/
+|			│ 		|	├── weights/
+|			│ 		|	└── args.yaml
+|	 		|		├── train2/
+|	 		|		├── train3/
+|	 		|		├── train4/
+|			|		└──  train5/
+|			|
+|	 		├── roboflow_r5_best.pt
+|	 		├── yolovn8n_dev1.pt
+|			├── yolov8m_pretrained.pt
+|			├── yolov8n_pretrained.pt
+|			└── yolov8n_robo.pt
+|
+
+├── vehicle_tracking/
+|	├── __py_cache__/
+|	├── camera_ingest/
+|	|	├── __py_cache__/
+|	|	├── __init__.py
+|	|	├── camera_client_0.py
+|	|	├── camera_client_1.py
+|	|	├── camera_server.py
+|	|	├── camera_yolo.py
+|	|	└── stream_controller.py
+|	├── config/
+|	├── counts/
+|	|	└── <some_date>/
+|	|		├── classes/
+|	|		|	└── <counts_desc>.txt
+|	|		├── intersections/
+|	|		└── total/
+|	├── detection/
+|	├── routes/
+|	|	├── __py_cache__/
+|	|	├── __init__.py
+|	|	├── api_routes.py
+|	|	├── stream_control_routes.py
+|	|	├── stream_routes.py
+|	|	└── ui_routes.py
+|	├── static/
+|	 |	|	├──css/
+|	|	|	|	└── styles.css
+|	 |	|	└── js/
+|	|	|	|	└── main.js
+|	├── stream_feeder/
+|	|	├── stream_feeder.py
+|	|	├── video_streamer_1.py
+|	|	├── video_streamer.py
+|	├── templates/
+|	 |	|	├── index.html
+|	 |	|	└── index_backup.html
+|	├── utils/
+|	|	├── __py_cache__/
+|	|	├── __init__.py
+|	|	└── streaming.py
+|	└── app.py
+|
+├── video_data/
+│   	├── uploads
+|	|	└── <video_name>.mp4
+│   	└── videos/
+|
+
+├── environment.yaml
+├── full_env.yaml
+├── LICENSE.txt
+├── README.md
+└── verified_env.txt
