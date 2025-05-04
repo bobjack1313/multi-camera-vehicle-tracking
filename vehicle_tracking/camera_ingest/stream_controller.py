@@ -77,19 +77,23 @@ class BaseCamera:
     last_access = {}  # time of last client access to the camera
     event = {}
 
-    def __init__(self, feed_type, device, port_list):
+    def __init__(self, feed_type, device, port_list, model_path=None):
         """Start the background camera thread if it isn't running yet."""
         self.unique_name = (feed_type, device)
+        self.model_path = model_path  # 💡 store per instance
+
         BaseCamera.event[self.unique_name] = CameraEvent()
 
         if self.unique_name not in BaseCamera.threads:
             BaseCamera.threads[self.unique_name] = None
+
         if BaseCamera.threads[self.unique_name] is None:
             BaseCamera.last_access[self.unique_name] = time.time()
 
             # start background frame thread
+
             BaseCamera.threads[self.unique_name] = threading.Thread(target=self._thread,
-                                                                    args=(self.unique_name, port_list))
+                                                                    args=(self.unique_name, port_list, model_path))
             BaseCamera.threads[self.unique_name].start()
 
             # wait until frames are available
@@ -113,9 +117,10 @@ class BaseCamera:
         raise RuntimeError('Must be implemented by subclasses')
 
     @staticmethod
-    def yolo_frames(image_hub, unique_name):
-        """"Generator that returns frames from the camera."""
-        raise RuntimeError('Must be implemented by subclasses')
+    def yolo_frames(image_hub, unique_name, model_path=None):
+        """Generator that returns frames from the camera."""
+        raise NotImplementedError("Subclasses must implement this method and accept model_path.")
+
 
     @staticmethod
     def server_frames(image_hub):
@@ -123,12 +128,11 @@ class BaseCamera:
         raise RuntimeError('Must be implemented by subclasses')
 
     @classmethod
-    def yolo_thread(cls, unique_name, port):
+    def yolo_thread(cls, unique_name, port, model_path=None):
         device = unique_name[1]
 
         image_hub = imagezmq.ImageHub(open_port='tcp://*:{}'.format(port))
-
-        frames_iterator = cls.yolo_frames(image_hub, unique_name)
+        frames_iterator = cls.yolo_frames(image_hub, unique_name, model_path=model_path)
         try:
             for frame in frames_iterator:
                 BaseCamera.frame[unique_name] = frame
@@ -170,7 +174,7 @@ class BaseCamera:
             print(e)
 
     @classmethod
-    def _thread(cls, unique_name, port_list):
+    def _thread(cls, unique_name, port_list, model_path=None):
         feed_type, device = unique_name
         if feed_type == 'camera':
             port = port_list  # Already a single int, not a list anymore
@@ -180,6 +184,5 @@ class BaseCamera:
         elif feed_type == 'yolo':
             port = port_list  # Already a single int, not a list anymore
             print('Starting YOLO thread for device {}.'.format(device))
-            cls.yolo_thread(unique_name, port)
-
+            cls.yolo_thread(unique_name, port, model_path=model_path)
         BaseCamera.threads[unique_name] = None

@@ -35,8 +35,5 @@ def system_status():
 
 @api_bp.route('/api/streams')
 def get_streams():
-    # Temporary static list — replace with real logic later
-    return jsonify([
-        {"id": 0, "camera_id": "Camera 1", "feed_type": "yolo"},
-        {"id": 1, "camera_id": "Camera 2", "feed_type": "yolo"}
-    ])
+    active_streams = session.get("active_streams", [])
+    return jsonify(active_streams)

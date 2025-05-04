@@ -29,9 +29,14 @@ from routes.stream_routes import stream_bp
 #from routes.stream_control_routes import stream_control_bp
 from routes.api_routes import api_bp
 
+
+
 app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
+
+app.secret_key = 'Wirw645-aer34_6dsf-23+4sd2fsSEF$'
+
 
 # Register Blueprints
 app.register_blueprint(ui_bp)

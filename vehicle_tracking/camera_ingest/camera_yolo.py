@@ -24,11 +24,23 @@ from collections import Counter, deque
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
 from camera_ingest.stream_controller import BaseCamera
+import logging
+
+logging.getLogger('ultralytics').setLevel(logging.WARNING)
 
 
 class Camera(BaseCamera):
-    def __init__(self, feed_type, device, port_list):
-        super(Camera, self).__init__(feed_type, device, port_list)
+    def __init__(self, feed_type, device, port_list, model_path=None):
+        self.model_path = model_path
+        super(Camera, self).__init__(feed_type, device, port_list, model_path)
+
+    @classmethod
+    def _thread(cls, unique_name, port_list, model_path=None):
+        feed_type, device = unique_name
+        port = port_list
+        if feed_type == 'yolo':
+            print(f"[{device}] Overridden YOLO _thread launching with model path")
+            cls.yolo_thread(unique_name, port, model_path=model_path)
 
     @staticmethod
     def intersect(A, B, C, D):
@@ -45,14 +57,17 @@ class Camera(BaseCamera):
         return np.degrees(np.arctan2(y, x))
 
     @staticmethod
-    def yolo_frames(image_hub, unique_name):
+    def yolo_frames(image_hub, unique_name, model_path=None):
+        if model_path is None:
+            model_path = os.path.join("models", "yolo", "roboflow_r5_best.pt")
+
+        print(f"[Camera {unique_name[1]}] Loading model from: {model_path}")
+        model = YOLO(model_path)
+
+
         cam_id = unique_name[1]
         print(f"[Camera {cam_id}] Starting YOLOv8 + Deep SORT stream...")
 
-        model_path = os.path.join("models", "yolo", "roboflow_r5_best.pt")
-        #model_path = "runs/detect/train5/weights/best.pt"
-
-        model = YOLO(model_path)
         tracker = DeepSort(max_age=30)
 
         CLASS_NAMES = ['bus', 'cars', 'delivery', 'emergency', 'motorcycle', 'semi truck', 'suv', 'truck', 'utility truck', 'van']
@@ -69,7 +84,9 @@ class Camera(BaseCamera):
         # Or group classes by renaming them in your class list (e.g., 'truck', 'bus' → 'vehicle')
 
         while True:
-            cam_name, frame = image_hub.recv_image()
+
+            identity, frame = image_hub.recv_image()
+            cam_name = identity[0]
             image_hub.send_reply(b'OK')
             orig_h, orig_w = frame.shape[:2]
 
@@ -221,6 +238,8 @@ class Camera(BaseCamera):
 
     #         tracks = tracker.update_tracks(detections, frame=frame)
     #         #print(f"[DEBUG] cam_name = {cam_name}")
+
+
 
     #         if cam_name == 'Camera 1':
     #             line = [(int(0.3 * frame.shape[1]), 0), (int(0.3 * frame.shape[1]), frame.shape[0])]

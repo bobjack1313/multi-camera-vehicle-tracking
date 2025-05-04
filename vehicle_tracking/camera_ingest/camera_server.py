@@ -34,6 +34,8 @@ class Camera(BaseCamera):
             time_start = time.time()
 
             cam_id, frame = image_hub.recv_image()
+            print(f"[SERVER] Received frame from: {cam_id}")
+
             image_hub.send_reply(b'OK')  # this is needed for the stream to work with REQ/REP pattern
 
             num_frames += 1

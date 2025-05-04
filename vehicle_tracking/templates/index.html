@@ -74,9 +74,17 @@
       <!-- Stream blocks dynamically inserted here by JS -->
     </div>
   </div>
+
 <h3>Add New Camera Feed</h3>
 <form id="add-stream-form" action="/add_stream" method="post" enctype="multipart/form-data">
-
+    <label>Select Model:</label>
+    <select name="model_path">
+  {% for model_file in available_models %}
+    <option value="{{ model_file }}" {% if model_file == selected_model %}selected{% endif %}>
+      {{ model_file.split('/')[-1] }}
+    </option>
+  {% endfor %}
+    </select>
   <label>Feed Type:</label>
   <select name="feed_type" id="feed_type" onchange="toggleFeedInput()">
     <option value="video">Video File</option>
@@ -101,11 +109,23 @@
     <input type="text" name="rtsp_url" placeholder="rtsp://..." />
   </div>
 
-  <label>Camera Name:</label>
-  <input type="text" name="camera_id" placeholder="Camera 3">
 
-  <button type="submit">Start Feed</button>
+  <div>
+    <button type="submit">Start Feed</button>
+  </div>
+
 </form>
+
+<!-- <form id="stop-stream-form" action="/stop_stream" method="post">
+  <label>Select Active Feed to Stop:</label>
+  <select name="camera_id">
+    {% for cam_id in active_streams %}
+      <option value="{{ cam_id }}">{{ cam_id }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Stop Feed</button>
+</form> -->
+
 
 <script>
 function toggleFeedInput() {
