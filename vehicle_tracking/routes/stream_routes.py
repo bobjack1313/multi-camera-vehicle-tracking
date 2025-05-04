@@ -23,7 +23,7 @@ from utils.streaming import gen
 
 stream_bp = Blueprint('stream_routes', __name__)
 
-MAX_STREAMS = 4
+MAX_STREAMS = 20
 BASE_PORT = 5555
 
 stream_handlers = {

@@ -37,6 +37,8 @@ app = Flask(__name__,
 
 app.secret_key = 'Wirw645-aer34_6dsf-23+4sd2fsSEF$'
 
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.debug = True
 
 # Register Blueprints
 app.register_blueprint(ui_bp)

@@ -44,7 +44,7 @@ def create_streamer(source, cam_id="Camera 0", connect_to='tcp://127.0.0.1:5555'
         ret, frame = cap.read()
         if ret:
             frame_count += 1
-            print(f"[{cam_id}] Sending frame #{frame_count}")
+            # print(f"[{cam_id}] Sending frame #{frame_count}")
             # sender.send_image(cam_id, frame)
             sender.send_image((cam_id, model_path), frame)
 
@@ -56,22 +56,6 @@ def create_streamer(source, cam_id="Camera 0", connect_to='tcp://127.0.0.1:5555'
                 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
             else:
                 break
-
-    # while True:
-    #     ret, frame = cap.read()
-
-    #     if ret:
-    #         sender.send_image(cam_id, frame)
-
-    #     else:
-    #         if loop:
-    #             cap = cv2.VideoCapture(source)
-    #             cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-    #             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-    #         else:
-    #             print(f"[{cam_id}] Stream ended.")
-    #             break
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Universal stream feeder (video file or RTSP).")

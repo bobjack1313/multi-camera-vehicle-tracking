@@ -16,6 +16,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from flask import Blueprint, request, redirect, url_for, render_template, session, jsonify
+from utils.streaming import stream_registry
 import subprocess
 import os
 import uuid
@@ -28,9 +29,6 @@ stream_control_bp = Blueprint('stream_control_routes', __name__)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'video_data/uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Stores active stream metadata
-stream_registry = {}
 
 
 def get_free_port(start=5555, end=5999):

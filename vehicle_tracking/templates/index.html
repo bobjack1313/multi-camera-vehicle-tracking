@@ -7,135 +7,115 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background: #f7f7f7;
-    }
-
-    nav {
-      background: #222;
-      color: #fff;
-      padding: 1rem;
-      display: flex;
-      gap: 2rem;
-    }
-
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .container {
-      padding: 1rem;
-    }
-
-    .stream-grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    }
-
-    .stream-box {
-      background: #fff;
-      padding: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-radius: 0.5rem;
-    }
-
-    .floating-btn {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-  </style>
 </head>
 <body>
+<nav>
+  <div class="left-control-column">
+  <a href="#">Streams</a>
+  <label>|</label>
+  <a href="#">Analytics</a>
+  <label>|</label>
+  <a href="#">Controls</a>
+  </div>
+  <div class="right-control-column">
+    <span class="nav-title">Multi Camera Vehicle Tracking</span>
+  </div>
+</nav>
+<div class="main-layout">
 
-  <nav>
-    <a href="#">Streams</a>
-    <a href="#">Analytics</a>
-    <a href="#">Controls</a>
-  </nav>
+  <div class="left-column">
+    <!-- Add Feed Form -->
+    <div class="add-feed-section">
+      <h3>Add New Camera Feed</h3>
 
-  <div class="container">
-    <div id="stream-grid" class="stream-grid">
-      <!-- Stream blocks dynamically inserted here by JS -->
+      <form id="add-stream-form" action="/add_stream" method="post" enctype="multipart/form-data">
+        <!-- <div class="form-row"> -->
+            <div class="form-row align-row">
+          <label>Select Model:</label>
+          <select name="model_path">
+          {% for model_file in available_models %}
+            <option value="{{ model_file }}" {% if model_file == selected_model %}selected{% endif %}>
+            {{ model_file.split('/')[-1] }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-row align-row">
+          <label>Feed Type:</label>
+          <select name="feed_type" id="feed_type" onchange="toggleFeedInput()">
+          <option value="video">Video File</option>
+          <option value="rtsp">RTSP/IP Camera</option>
+          </select>
+        </div>
+
+        <div id="video_input">
+          <div class="form-row">
+            <label for="video_file">Upload Video File:</label>
+          </div>
+        <div class="form-row file-row">
+          <span id="filename">No file chosen</span>
+          <label class="custom-file">
+          Choose File
+          <input type="file" name="video_file" id="video_file" onchange="updateFilename(this)">
+          </label>
+        </div>
+
+        <div class="form-row">
+            <p class="or-text">-- Or --</p>
+        </div>
+
+        <div class="form-row align-row">
+            <label>Select Existing Video:</label>
+            <select name="existing_file">
+            <option value="">-- None --</option>
+            {% for vid in existing_videos %}
+              <option value="{{ vid }}">{{ vid.split('/')[-1] }}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-row" id="rtsp_input" style="display: none;">
+          <label for="rtsp_url">RTSP URL:</label>
+          <div class="full-width-input">
+            <input type="text" id="rtsp_url" name="rtsp_url" placeholder="rtsp://..." />
+          </div>
+        </div>
+
+        <div class="form-row button-row">
+            <button type="submit">Start Feed</button>
+        </div>
+      </form>
+    </div> <!-- End left-column -->
+
+    <!-- Remove Feed Section (hookup later) -->
+    <div class="remove-feed-section">
+      <h3>Stop a Camera Feed</h3>
+      <!-- Optional: Uncomment this when remove stream is hooked up -->
+      <!-- <form id="stop-stream-form" action="/stop_stream" method="post">
+      <label>Select Active Feed to Stop:</label>
+      <select name="camera_id">
+      {% for cam_id in active_streams %}
+      <option value="{{ cam_id }}">{{ cam_id }}</option>
+      {% endfor %}
+      </select>
+      <button type="submit">Stop Feed</button>
+      </form> -->
+    </div>
+
+    <!-- Future Controls Placeholder -->
+    <div class="future-controls">
+      <!-- <p>Future controls here</p> -->
     </div>
   </div>
 
-<h3>Add New Camera Feed</h3>
-<form id="add-stream-form" action="/add_stream" method="post" enctype="multipart/form-data">
-    <label>Select Model:</label>
-    <select name="model_path">
-  {% for model_file in available_models %}
-    <option value="{{ model_file }}" {% if model_file == selected_model %}selected{% endif %}>
-      {{ model_file.split('/')[-1] }}
-    </option>
-  {% endfor %}
-    </select>
-  <label>Feed Type:</label>
-  <select name="feed_type" id="feed_type" onchange="toggleFeedInput()">
-    <option value="video">Video File</option>
-    <option value="rtsp">RTSP/IP Camera</option>
-  </select>
-
-  <div id="video_input">
-    <label>Select Video File:</label>
-    <input type="file" name="video_file" accept="video/*">
-    
-    <label>Or select existing video:</label>
-    <select name="existing_file">
-    <option value="">-- None --</option>
-    {% for vid in existing_videos %}
-      <option value="{{ vid }}">{{ vid.split('/')[-1] }}</option>
-    {% endfor %}
-    </select>
+  <div class="right-column">
+      <div id="stream-grid" class="stream-grid">
+        <!-- Stream blocks dynamically inserted here by JS -->
+      </div>
   </div>
 
-  <div id="rtsp_input" style="display: none;">
-    <label>RTSP URL:</label>
-    <input type="text" name="rtsp_url" placeholder="rtsp://..." />
-  </div>
-
-
-  <div>
-    <button type="submit">Start Feed</button>
-  </div>
-
-</form>
-
-<!-- <form id="stop-stream-form" action="/stop_stream" method="post">
-  <label>Select Active Feed to Stop:</label>
-  <select name="camera_id">
-    {% for cam_id in active_streams %}
-      <option value="{{ cam_id }}">{{ cam_id }}</option>
-    {% endfor %}
-  </select>
-  <button type="submit">Stop Feed</button>
-</form> -->
-
-
-<script>
-function toggleFeedInput() {
-  const type = document.getElementById("feed_type").value;
-  document.getElementById("video_input").style.display = (type === "video") ? "block" : "none";
-  document.getElementById("rtsp_input").style.display = (type === "rtsp") ? "block" : "none";
-}
-</script>
-
-  <!-- <button class="floating-btn" onclick="addCamera()">+</button> -->
+</div> <!-- End main-layout -->
 
 </body>
 </html>

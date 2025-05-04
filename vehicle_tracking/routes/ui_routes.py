@@ -19,12 +19,15 @@
 import os
 import glob
 from flask import Response, Blueprint, render_template, request, jsonify, session, redirect
-from .stream_control_routes import stream_registry
+from utils.streaming import stream_registry
 import cv2
 import imagezmq
 
-# image_hub = imagezmq.ImageHub()  # shared across requests
-image_hub = imagezmq.ImageHub(open_port="tcp://*:5556")
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    image_hub = imagezmq.ImageHub(open_port="tcp://*:5556")
+else:
+    image_hub = None
+
 ui_bp = Blueprint("ui_routes", __name__)
 
 @ui_bp.route('/')
@@ -64,4 +67,3 @@ def video_feed(stream_id):
     port = stream["port"]
     print(f"[VIDEO_FEED] Redirecting to stream at port {port}")
     return redirect(f"http://localhost:{port}/video")
-
