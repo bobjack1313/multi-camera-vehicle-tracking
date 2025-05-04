@@ -23,7 +23,9 @@ import datetime
 from collections import Counter, deque
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
-from camera_ingest.stream_controller import BaseCamera
+from vehicle_tracking.camera_ingest.stream_controller import BaseCamera
+
+# from camera_ingest.stream_controller import BaseCamera
 import logging
 
 logging.getLogger('ultralytics').setLevel(logging.WARNING)
@@ -63,9 +65,11 @@ class Camera(BaseCamera):
 
         print(f"[Camera {unique_name[1]}] Loading model from: {model_path}")
         model = YOLO(model_path)
+        cam_full = unique_name[1]
+        cam_id, stream_uuid = cam_full.split("|") if "|" in cam_full else (cam_full, "unknown")
 
 
-        cam_id = unique_name[1]
+        # cam_id = unique_name[1]
         print(f"[Camera {cam_id}] Starting YOLOv8 + Deep SORT stream...")
 
         tracker = DeepSort(max_age=30)

@@ -19,14 +19,6 @@ from flask import Blueprint, jsonify
 
 api_bp = Blueprint('api_routes', __name__)
 
-# You can prefix blueprints using:
-# app.register_blueprint(api_bp, url_prefix='/api')
-
-# # For now: a static test list (later replace with real stream tracking)
-# streams = [
-#     {"id": 0, "camera_id": "Camera 1", "feed_type": "yolo"},
-#     {"id": 1, "camera_id": "Camera 2", "feed_type": "yolo"}
-# ]
 
 @api_bp.route('/api/status')
 def system_status():

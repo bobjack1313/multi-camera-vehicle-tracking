@@ -19,10 +19,12 @@
 import os
 import glob
 from flask import Response, Blueprint, render_template, request, jsonify, session, redirect
+from flask import send_file, stream_with_context
 from utils.streaming import stream_registry
 import cv2
 import imagezmq
 
+# Set up image hub only if this is the main thread
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     image_hub = imagezmq.ImageHub(open_port="tcp://*:5556")
 else:
@@ -48,22 +50,20 @@ def index():
     )
 
 
-@ui_bp.route('/video_feed/video/<int:stream_id>')
+@ui_bp.route('/video_feed/yolo/<stream_id>')
 def video_feed(stream_id):
     print(f"[VIDEO_FEED] Called with stream_id={stream_id}")
+    print(f"[VIDEO_FEED] Available registry keys: {list(stream_registry.keys())}")
 
-    active_streams = session.get("active_streams", [])
-    if stream_id >= len(active_streams):
-        print(f"[VIDEO_FEED] Invalid stream_id: {stream_id}")
+    stream = stream_registry.get(stream_id)
+    if not stream:
+        print(f"[VIDEO_FEED] No active stream matches stream_id: {stream_id}")
         return "Stream not found", 404
 
-    camera_id = active_streams[stream_id]["camera_id"]
-    stream = stream_registry.get(camera_id)
-
-    if not stream:
-        print(f"[VIDEO_FEED] Missing registry for {camera_id}")
-        return "Stream registry missing", 500
-
-    port = stream["port"]
+    port = stream.get("port")
     print(f"[VIDEO_FEED] Redirecting to stream at port {port}")
+
+    #return redirect(f"/internal_proxy/{port}/video")
+
     return redirect(f"http://localhost:{port}/video")
+

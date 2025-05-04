@@ -36,7 +36,7 @@ app = Flask(__name__,
             static_folder='static')
 
 app.secret_key = 'Wirw645-aer34_6dsf-23+4sd2fsSEF$'
-
+print("SECRET CONFIG")
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.debug = True
 
@@ -47,4 +47,4 @@ app.register_blueprint(stream_control_bp)
 app.register_blueprint(api_bp)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True)
+    app.run(host='0.0.0.0',port=5000, threaded=True)

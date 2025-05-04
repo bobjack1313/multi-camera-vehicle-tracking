@@ -26,7 +26,7 @@
   <div class="left-column">
     <!-- Add Feed Form -->
     <div class="add-feed-section">
-      <h3>Add New Camera Feed</h3>
+      <h3>Add New Video Feed</h3>
 
       <form id="add-stream-form" action="/add_stream" method="post" enctype="multipart/form-data">
         <!-- <div class="form-row"> -->
@@ -83,16 +83,16 @@
         </div>
 
         <div class="form-row button-row">
-            <button type="submit">Start Feed</button>
+            <button type="submit">Add Feed</button>
         </div>
       </form>
     </div> <!-- End left-column -->
 
-    <!-- Remove Feed Section (hookup later) -->
-    <div class="remove-feed-section">
+    <!-- Remove Feed Section -->
+<!--     <div class="remove-feed-section">
       <h3>Stop a Camera Feed</h3>
-      <!-- Optional: Uncomment this when remove stream is hooked up -->
-      <!-- <form id="stop-stream-form" action="/stop_stream" method="post">
+
+      <form id="stop-stream-form" action="/stop_stream" method="post">
       <label>Select Active Feed to Stop:</label>
       <select name="camera_id">
       {% for cam_id in active_streams %}
@@ -100,8 +100,26 @@
       {% endfor %}
       </select>
       <button type="submit">Stop Feed</button>
-      </form> -->
+      </form>
+    </div> -->
+
+<div class="remove-feed-section">
+  <h3>Remove Video Feed</h3>
+
+  <form id="stop-stream-form">
+    <div class="form-row">
+      <label for="stop_camera_id">Select Active Feed to Stop:</label>
+      <select id="stop_camera_id" name="camera_id">
+        <option value="">-- Select Stream --</option>
+        <!-- Options will be inserted dynamically by JS -->
+      </select>
     </div>
+
+    <div class="form-row button-row">
+      <button type="submit">Remove Feed</button>
+    </div>
+  </form>
+</div>
 
     <!-- Future Controls Placeholder -->
     <div class="future-controls">
