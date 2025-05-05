@@ -152,24 +152,77 @@ def add_stream():
     return redirect(url_for('ui_routes.index'))
 
 
-
-
 @stream_control_bp.route('/stop_stream/<camera_id>', methods=['POST'])
 def stop_stream(camera_id):
+    from urllib.parse import unquote
+    import signal
+    from flask import abort
+
+    camera_id = unquote(camera_id)
     print(f"[CONTROL] Attempting to stop stream: {camera_id}")
+    print(f"[CONTROL] Available keys: {list(stream_registry.keys())}")
 
-    for proc in psutil.process_iter(['pid', 'cmdline']):
-        try:
-            cmdline = proc.info['cmdline']
-            if cmdline and camera_id in ' '.join(cmdline) and 'stream_feeder.py' in cmdline:
-                print(f"[KILL] Found process for {camera_id}: PID={proc.pid}")
-                proc.kill()
+    try:
+        stream_info = stream_registry.get(camera_id)
+        if not stream_info:
+            print(f"[CONTROL] Stream not found in registry: {camera_id}")
+            abort(404)
 
-                # Remove from registry
-                stream_registry.pop(camera_id, None)
+        pid = stream_info.get("pid")
+        if pid:
+            try:
+                os.kill(pid, signal.SIGTERM)
+                print(f"[CONTROL] Sent SIGTERM to PID {pid}")
+            except ProcessLookupError:
+                print(f"[CONTROL] PID {pid} not found — likely already terminated.")
 
-                return f"Stream for {camera_id} stopped.", 200
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            continue
+        # Clean up stream registry
+        stream_registry.pop(camera_id, None)
 
-    return f"No active stream found for {camera_id}.", 404
+        # Clean up session
+        active_streams = session.get("active_streams", [])
+
+        if "|" in camera_id:
+            base_cam_id, stream_uuid = camera_id.split("|", 1)
+            active_streams = [
+                s for s in active_streams
+                if not (s["camera_id"] == base_cam_id and s["id"] == stream_uuid)
+            ]
+        else:
+            # fallback: remove all that match camera_id only
+            active_streams = [
+                s for s in active_streams
+                if s["camera_id"] != camera_id
+            ]
+
+        session["active_streams"] = active_streams
+        session.modified = True
+
+        print(f"[CONTROL] Successfully stopped and removed stream: {camera_id}")
+        return redirect(url_for('ui_routes.index'))
+
+    except Exception as e:
+        print(f"[CONTROL] Failed to stop stream {camera_id}: {e}")
+        abort(500)
+
+
+
+# @stream_control_bp.route('/stop_stream/<camera_id>', methods=['POST'])
+# def stop_stream(camera_id):
+#     print(f"[CONTROL] Attempting to stop stream: {camera_id}")
+
+#     for proc in psutil.process_iter(['pid', 'cmdline']):
+#         try:
+#             cmdline = proc.info['cmdline']
+#             if cmdline and camera_id in ' '.join(cmdline) and 'stream_feeder.py' in cmdline:
+#                 print(f"[KILL] Found process for {camera_id}: PID={proc.pid}")
+#                 proc.kill()
+
+#                 # Remove from registry
+#                 stream_registry.pop(camera_id, None)
+
+#                 return f"Stream for {camera_id} stopped.", 200
+#         except (psutil.NoSuchProcess, psutil.AccessDenied):
+#             continue
+
+#     return f"No active stream found for {camera_id}.", 404

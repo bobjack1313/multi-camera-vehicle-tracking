@@ -20,6 +20,11 @@ import time
 import cv2
 
 
+# Global in-memory registry for active camera stream configurations.
+# This gets populated during stream creation (e.g., add_stream).
+stream_registry = {}
+
+
 def gen(camera_stream, feed_type, device):
     '''
     Generator function for streaming video frames to the Flask Response object.
