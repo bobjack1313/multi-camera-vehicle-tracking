@@ -103,37 +103,53 @@
       </form>
     </div> -->
 
-<div class="remove-feed-section">
-  <h3>Remove Video Feed</h3>
-
-  <form id="stop-stream-form">
-    <div class="form-row">
-      <label for="stop_camera_id">Select Active Feed to Stop:</label>
-      <select id="stop_camera_id" name="camera_id">
-        <option value="">-- Select Stream --</option>
-        <!-- Options will be inserted dynamically by JS -->
-      </select>
+    <div class="remove-feed-section">
+      <h3>Remove Video Feed</h3>
+      <form id="stop-stream-form">
+        <div class="form-row">
+          <label for="stop_camera_id">Select Active Feed to Stop:</label>
+          <select id="stop_camera_id" name="camera_id">
+            <option value="">-- Select Stream --</option>
+          </select>
+        </div>
+        <div class="form-row button-row">
+          <button type="submit">Remove Feed</button>
+        </div>
+      </form>
     </div>
 
-    <div class="form-row button-row">
-      <button type="submit">Remove Feed</button>
-    </div>
-  </form>
-</div>
+    <div class="export-logs-section">
+      <h3>Export Logs</h3>
+      <form id="download-logs-form">
+        <div class="form-row export-log-row">
+          <div class="log-date-column">
+            <label for="log-date">Select Date:</label>
+            <select id="log-date" name="log-date">
+              <option value="">-- Select date --</option>
+            </select>
+          </div>
+          <div class="download-btn-column">
+            <button type="submit" class="btn">Download Logs</button>
+          </div>
+        </div>
+      </form>
 
-    <!-- Future Controls Placeholder -->
-    <div class="future-controls">
-      <!-- <p>Future controls here</p> -->
+      <form id="export-logs-form" method="GET" action="/export_logs_all">
+        <div class="form-row center-row">
+          <button type="submit" class="btn">Download All Logs (ZIP)</button>
+        </div>
+      </form>
     </div>
-  </div>
+
+  </div> <!-- End .left-column -->
 
   <div class="right-column">
-      <div id="stream-grid" class="stream-grid">
-        <!-- Stream blocks dynamically inserted here by JS -->
-      </div>
+    <div id="stream-grid" class="stream-grid">
+      <!-- Stream blocks dynamically inserted here by JS -->
+    </div>
   </div>
 
-</div> <!-- End main-layout -->
+</div> <!-- End .main-layout -->
 
 </body>
 </html>

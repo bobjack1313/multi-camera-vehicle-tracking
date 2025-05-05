@@ -192,3 +192,67 @@ nav a {
   margin-top: 0.5rem;
   box-sizing: border-box;
 }
+.export-logs-section {
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+.export-logs-section h3 {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #666;
+  padding-bottom: 0.5rem;
+}
+
+.export-log-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.log-date-column {
+  flex: 1;
+  min-width: 160px;
+}
+
+.download-btn-column {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.center-row {
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+
+.log-download-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.download-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #45a049;
+}
+
+.lower-download {
+  margin-top: 2.5rem;
+}

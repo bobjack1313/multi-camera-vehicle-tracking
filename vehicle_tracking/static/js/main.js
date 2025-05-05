@@ -36,17 +36,51 @@
 
 
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
   loadStreams();
   loadActiveStreamsDropdown();
+  populateLogDatesDropdown();
+
+  // Populate date dropdown
+  fetch('/list_log_dates')
+    .then(response => response.json())
+    .then(data => {
+      const dateDropdown = document.getElementById('log-date');
+      data.dates.forEach(date => {
+        const option = document.createElement('option');
+        option.value = date;
+        option.textContent = date;
+        dateDropdown.appendChild(option);
+      });
+    });
+
+  // Handle download logs form for selected date
+  document.getElementById('download-logs-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const selectedDate = document.getElementById('log-date').value;
+    if (selectedDate) {
+      window.location.href = `/export_logs/${selectedDate}`;
+    } else {
+      alert('Please select a date.');
+    }
+  });
 
   const feedType = document.getElementById("feed_type");
   if (feedType) {
     feedType.addEventListener("change", toggleFeedInput);
     toggleFeedInput();
   }
+
+  const form = document.getElementById("download-logs-form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const date = document.getElementById("log-date").value;
+    if (date) {
+      window.location.href = `/export_logs/${encodeURIComponent(date)}`;
+    } else {
+      showToast("Please select a date.");
+    }
+  });
 
   const stopForm = document.getElementById("stop-stream-form");
   if (stopForm) {
@@ -102,12 +136,20 @@ async function loadStreams() {
         <p>Model: ${stream.model.split('/').pop()}</p>
       `;
 
+      const exportBtn = document.createElement("button");
+      exportBtn.textContent = "Export Logs";
+      exportBtn.onclick = () => {
+        window.location.href = `/export_logs/${stream.camera_id}`;
+      };
+
+      box.appendChild(exportBtn);
       container.appendChild(box);
     });
   } catch (err) {
     console.error("Error loading streams:", err);
   }
 }
+
 
 // async function loadStreams() {
 //   try {
@@ -209,6 +251,25 @@ async function loadActiveStreamsDropdown() {
       });
   } catch (err) {
     console.error("Failed to load active streams:", err);
+  }
+}
+
+async function populateLogDatesDropdown() {
+  try {
+    const res = await fetch("/api/log_dates");
+    const dates = await res.json();
+    const dropdown = document.getElementById("log-date");
+    if (!dropdown) return;
+
+    dropdown.innerHTML = '<option value="">-- Select a date --</option>';
+    dates.forEach(entry => {
+      const opt = document.createElement("option");
+      opt.value = entry.folder;
+      opt.textContent = entry.label;
+      dropdown.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Failed to load log dates:", err);
   }
 }
 
