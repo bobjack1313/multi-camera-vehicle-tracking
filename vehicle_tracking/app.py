@@ -28,15 +28,24 @@ from routes.ui_routes import ui_bp
 from routes.stream_routes import stream_bp
 #from routes.stream_control_routes import stream_control_bp
 from routes.api_routes import api_bp
+import os
 
+
+def load_application_key(filename='application_validation.txt'):
+    base_dir = os.path.dirname(__file__)
+    path = os.path.join(base_dir, filename)
+    try:
+        with open(path, 'r') as f:
+            return f.read().strip()
+    except Exception as e:
+        raise RuntimeError(f"Failed to load secret key from {path}: {e}")
 
 
 app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-app.secret_key = 'Wirw645-aer34_6dsf-23+4sd2fsSEF$'
-
+app.secret = load_application_key()
 
 # Register Blueprints
 app.register_blueprint(ui_bp)
